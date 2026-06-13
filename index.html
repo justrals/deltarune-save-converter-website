@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deltarune Save Converter - Convert Console &amp; PC Save Files</title>
+  <meta name="description" content="Convert Deltarune save files between console (Switch, PS4, PS5, Xbox) and PC formats. Online tool for .sav conversion, save editing, and INI building.">
+  <meta name="keywords" content="Deltarune, save converter, .sav, console to PC, PC to console, Switch save, PS4 save, PS5 save, Xbox save, Deltarune save editor">
+  <meta name="author" content="justrals">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://github.com/justrals/deltarune-save-converter-website.git">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Deltarune Save Converter - Convert Console &amp; PC Save Files">
+  <meta property="og:description" content="Convert Deltarune save files between console (Switch, PS4, PS5, Xbox) and PC formats online.">
+  <meta property="og:image" content="img/Deltarune.webp">
+  <meta property="og:url" content="https://github.com/justrals/deltarune-save-converter-website.git">
+  <meta property="og:site_name" content="Deltarune Save Converter">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Deltarune Save Converter - Convert Console &amp; PC Save Files">
+  <meta name="twitter:description" content="Convert Deltarune save files between console and PC formats online.">
+  <meta name="twitter:image" content="img/Deltarune.webp">
+  <link rel="icon" type="image/webp" href="img/Deltarune.webp">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Deltarune Save Converter",
+    "url": "https://github.com/justrals/deltarune-save-converter-website.git",
+    "description": "Convert Deltarune save files between console (Switch, PS4, PS5, Xbox) and PC formats.",
+    "applicationCategory": "UtilityApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires JavaScript"
+  }
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>Deltarune Save Converter</h1>
+        <p class="subtitle">Convert your Deltarune save files between console and pc!</p>
+      </div>
+      <div>
+        <a class="btn btn-primary github-btn" href="https://github.com/justrals/deltarune-save-converter-website.git" target="_blank"><img class="github-logo" src="img/GitHub.png"></a>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-target="mode-console2pc">Console to PC</button>
+      <button class="tab" data-target="mode-pc2console">PC to Console</button>
+      <button class="tab" data-target="mode-tools">Tools</button>
+    </div>
+
+    <div id="mode-console2pc" class="mode-content active">
+      <div class="card">
+        <h2>Convert .sav to PC saves</h2>
+        <div class="upload-area" id="c2p-upload">
+          <input type="file" id="c2p-file" accept=".sav">
+          <img src="img/Deltarune.webp" class="icon" alt="">
+          <div class="label" id="c2p-label">Drop a .sav file here or click to browse</div>
+          <div class="hint">Switch, PS4, PS5, Xbox</div>
+        </div>
+        <div class="file-list" id="c2p-filelist"></div>
+        <div class="mt-2 flex">
+          <button class="btn btn-primary" id="c2p-convert" disabled>Convert to PC</button>
+          <button class="btn btn-success hidden" id="c2p-download">Download ZIP</button>
+        </div>
+        <div class="log" id="c2p-log"></div>
+      </div>
+    </div>
+
+    <div id="mode-pc2console" class="mode-content">
+      <div class="card">
+        <h2>Convert PC saves to .sav</h2>
+        <div class="upload-area" id="p2c-upload">
+          <input type="file" id="p2c-files" webkitdirectory multiple>
+          <img src="img/Deltarune.webp" class="icon" alt="">
+          <div class="label" id="p2c-label">Drop a folder of PC saves here or click to browse</div>
+          <div class="hint">Select folder with filech1_*, filech2_*, etc.</div>
+        </div>
+        <div class="file-list" id="p2c-filelist"></div>
+        <div class="mt-2 flex">
+          <button class="btn btn-primary" id="p2c-convert" disabled>Convert to SAV</button>
+          <button class="btn btn-success hidden" id="p2c-download">Download SAV</button>
+        </div>
+        <div class="log" id="p2c-log"></div>
+      </div>
+    </div>
+
+    <div id="mode-tools" class="mode-content">
+      <div class="card">
+        <h2>Single-file conversion</h2>
+        <label for="tool-direction">Direction</label>
+        <select id="tool-direction">
+          <option value="console2pc">Console to PC</option>
+          <option value="pc2console">PC to Console</option>
+        </select>
+        <div class="upload-area" id="tool-upload">
+          <input type="file" id="tool-file">
+          <img src="img/Deltarune.webp" class="icon" alt="">
+          <div class="label" id="tool-label">Choose a save file</div>
+        </div>
+        <div class="mt-2 flex">
+          <button class="btn btn-primary" id="tool-convert" disabled>Convert</button>
+          <button class="btn btn-success hidden" id="tool-download">Download</button>
+        </div>
+        <div class="log" id="tool-log"></div>
+      </div>
+
+      <hr class="tools-divider">
+
+      <div class="card">
+        <h2>SAV archive tools</h2>
+        <div class="flex mb-2">
+          <button class="btn btn-primary" id="tool-extract-sav" disabled>Extract SAV</button>
+          <button class="btn btn-primary" id="tool-pack-sav" disabled>Pack SAV</button>
+        </div>
+        <div class="upload-area" id="tool-sav-upload">
+          <input type="file" id="tool-sav-file">
+          <img src="img/Deltarune.webp" class="icon" alt="">
+          <div class="label" id="tool-sav-label">Drop a .sav or files here</div>
+          <div class="hint">Extract: pick .sav | Pack: pick save files</div>
+        </div>
+        <div class="file-list" id="tool-sav-filelist"></div>
+        <div id="tool-sav-extra" class="hidden mt-2">
+          <label for="tool-sav-name">Output filename</label>
+          <input type="text" id="tool-sav-name" value="deltarune.sav">
+        </div>
+        <div class="log" id="tool-sav-log"></div>
+      </div>
+
+      <hr class="tools-divider">
+
+      <div class="card">
+        <h2>Build INI from PC saves</h2>
+        <div class="upload-area" id="ini-upload">
+          <input type="file" id="ini-files" webkitdirectory multiple>
+          <img src="img/Deltarune.webp" class="icon" alt="">
+          <div class="label" id="ini-label">Drop a folder of PC saves here</div>
+          <div class="hint">Select folder with filech1_*, filech2_*, etc.</div>
+        </div>
+        <div class="file-list" id="ini-filelist"></div>
+        <div class="mt-2 flex">
+          <button class="btn btn-primary" id="ini-convert" disabled>Build INI</button>
+          <button class="btn btn-success hidden" id="ini-download">Download INI</button>
+        </div>
+        <div class="log" id="ini-log"></div>
+      </div>
+    </div>
+  </div>
+
+<script src="script.js"></script>
+</body>
+</html>
