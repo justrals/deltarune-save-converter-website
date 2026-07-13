@@ -48,7 +48,7 @@ class GMSListEncoder {
                 const enc = new TextEncoder().encode(item.value);
                 const buf = new ArrayBuffer(8 + enc.length);
                 const v = new DataView(buf);
-                v.setInt32(0, 2, true);
+                v.setInt32(0, 1, true);
                 v.setInt32(4, enc.length, true);
                 new Uint8Array(buf, 8).set(enc);
                 parts.push(buf);
@@ -432,6 +432,17 @@ function buildIni(files, entries) {
             sections[sec]["Date"] = '"0"'; sections[sec]["Room"] = `"${save.currentroom}"`;
             sections[sec]["InitLang"] = `"${save.flag[912]}"`; sections[sec]["UraBoss"] = `"${save.flag[1629] | 0}"`;
             files.log(`  "${save.truename}" ch4 → [${sec}]`);
+        } else if (filename.startsWith("filech5")) {
+            if (!DeltaruneCh2.isPC(lines)) continue;
+            save = new DeltaruneCh2(); save.readPC(lines);
+            const id = parseInt(filename.replace("filech5_", ""));
+            if (id >= 3 && id < 6) status = 1;
+            const sec = `G_5_${id}`; sections[sec] = {}; order.push(sec);
+            sections[sec]["Name"] = save.truename; sections[sec]["Level"] = `"${save.lv}"`;
+            sections[sec]["Love"] = `"${save.llv}"`; sections[sec]["Time"] = `"${save.time}"`;
+            sections[sec]["Date"] = '"0"'; sections[sec]["Room"] = `"${save.currentroom}"`;
+            sections[sec]["InitLang"] = `"${save.flag[912]}"`;
+            files.log(`  "${save.truename}" ch5 → [${sec}]`);
         }
     }
     sections["STATUS"] = { "STATUS": `"${status}"` };
@@ -526,7 +537,7 @@ els("c2p-convert").addEventListener("click", async () => {
                     results.push([name, save.writePC()]);
                     log(c2pLog, `  Converted ${name} (${save.truename})`, "info");
                 } catch (e) { log(c2pLog, `  ${name}: error - ${e.message}`, "error"); }
-            } else if ((name.startsWith("filech2") || name.startsWith("filech3") || name.startsWith("filech4")) && DeltaruneCh2.isConsole(lines)) {
+            } else if ((name.startsWith("filech2") || name.startsWith("filech3") || name.startsWith("filech4") || name.startsWith("filech5")) && DeltaruneCh2.isConsole(lines)) {
                 const save = new DeltaruneCh2();
                 try {
                     save.readConsole(lines);
@@ -577,7 +588,7 @@ els("p2c-convert").addEventListener("click", async () => {
                     outData[name] = save.writeConsole();
                     log(p2cLog, `  Converted ${name} (${save.truename})`, "info");
                 } catch (e) { log(p2cLog, `  ${name}: error - ${e.message}`, "error"); return; }
-            } else if (name.startsWith("filech2") || name.startsWith("filech3") || name.startsWith("filech4")) {
+            } else if (name.startsWith("filech2") || name.startsWith("filech3") || name.startsWith("filech4") || name.startsWith("filech5")) {
                 const save = new DeltaruneCh2();
                 try {
                     save.readPC(lines);
@@ -629,7 +640,7 @@ els("tool-convert").addEventListener("click", async () => {
             } else if (isCh2) {
                 const save = new DeltaruneCh2(); save.readConsole(lines);
                 result = save.writePC(); outName = toolFileData.name + "_pc";
-                log(toolLog, `Converted Ch2 console → PC (${save.truename})`, "info");
+                log(toolLog, `Converted Ch2+ console → PC (${save.truename})`, "info");
             } else {
                 throw new Error("Unknown save format");
             }
@@ -643,7 +654,7 @@ els("tool-convert").addEventListener("click", async () => {
             } else if (isCh2) {
                 const save = new DeltaruneCh2(); save.readPC(lines);
                 result = save.writeConsole(); outName = toolFileData.name + "_console";
-                log(toolLog, `Converted Ch2 PC → console (${save.truename})`, "info");
+                log(toolLog, `Converted Ch2+ PC → console (${save.truename})`, "info");
             } else {
                 throw new Error("Unknown save format");
             }
