@@ -442,6 +442,7 @@ function buildIni(files, entries) {
             sections[sec]["Love"] = `"${save.llv}"`; sections[sec]["Time"] = `"${save.time}"`;
             sections[sec]["Date"] = '"0"'; sections[sec]["Room"] = `"${save.currentroom}"`;
             sections[sec]["InitLang"] = `"${save.flag[912]}"`;
+            sections[sec]["UraBoss"] = `"${save.flag[1908] | 0}"`;
             files.log(`  "${save.truename}" ch5 → [${sec}]`);
         }
     }
